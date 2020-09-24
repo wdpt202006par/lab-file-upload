@@ -34,6 +34,7 @@ router.get('/:id', function (req, res, next) {
   const id = req.params.id;
 
   Post.findById(id)
+    .populate('comments.authorId')
     .then(post => {
       res.render('posts/show', {
         post: post,
@@ -43,5 +44,23 @@ router.get('/:id', function (req, res, next) {
     .catch(next);
   ;
 });
+
+router.post('/:id/comments', uploadCloud.single('image'), function (req, res, next) {
+  if (!req.session.currentUser) return next(new Error('You must be logged to create a comment'));
+
+  const id = req.params.id;
+
+  Post.update({ _id: id }, { $push: { comments: {
+    content: req.body.content,
+    authorId: req.session.currentUser.id,
+    imagePath: req.file.path,
+    imageName: req.file.originalname
+  }}})
+    .then(book => {
+      res.redirect(`/posts/${id}`);
+    })
+    .catch(next)
+  ;
+})
 
 module.exports = router; 

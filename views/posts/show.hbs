@@ -8,3 +8,38 @@
     {{post.content}}
   </p>
 </article>
+
+<h2>Comments</h2>
+<ul>
+  {{#each post.comments}}
+  <li>
+    <img src="{{imagePath}}" alt>
+    <div>{{content}}</div>
+    <cite>
+      -- by {{authorId.username}}
+    </cite>
+  </li>
+  {{else}}
+  <li>no comment yet</li>
+  {{/each}}
+</ul>
+
+{{#if user}}
+<h3>New comment</h3>
+<form action="/posts/{{post.id}}/comments" method="POST" enctype="multipart/form-data">
+  <p>
+    <label>
+      Content:
+      <textarea name="content"></textarea>
+    </label>
+  </p>
+  <p>
+    <label>
+      Image:
+      <input type="file" name="image">
+    </label>
+  </p>
+
+  <button>Comment</button>
+</form>
+{{/if}} 
